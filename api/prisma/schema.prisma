@@ -1,0 +1,312 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+  GITHUB
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  email           String   @unique
+  username        String   @unique
+  password        String?
+  fullName        String?
+  avatar          String?
+  phone           String?
+  dateOfBirth     DateTime?
+  authProvider    AuthProvider @default(LOCAL)
+  role            Role     @default(USER)
+  isActive        Boolean  @default(true)
+  isEmailVerified Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  refreshTokens   RefreshToken[]
+  cart             Cart?
+  orders           Order[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        Int   @id @default(autoincrement())
+  token     String   @unique
+  userId    Int   // ✅ fix ở đây
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────────────
+
+enum Gender {
+  MALE
+  FEMALE
+  UNISEX
+}
+
+enum Concentration {
+  PARFUM       // Nước hoa nguyên chất  (20–30%)
+  EDP          // Eau de Parfum         (15–20%)
+  EDT          // Eau de Toilette       (5–15%)
+  EDC          // Eau de Cologne        (2–5%)
+  EDX          // Eau Fraîche / mist    (<3%)
+}
+
+// ─── Brand ───────────────────────────────────────────────────────────────────
+
+model Brand {
+  id          Int       @id @default(autoincrement())
+  name        String    @unique              // "Chanel", "Dior", "DUWNG"
+  slug        String    @unique              // "chanel", "dior", "duwng"
+  logo        String?                        // URL logo
+  description String?   @db.Text
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  products    Product[]
+
+  @@map("brands")
+}
+
+// ─── Category ────────────────────────────────────────────────────────────────
+
+model Category {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique              // "Nước hoa nam", "Nước hoa nữ"
+  slug        String     @unique
+  description String?    @db.Text
+  image       String?
+  parentId    Int?
+  parent      Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children    Category[] @relation("CategoryTree")
+  isActive    Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  products    Product[]
+
+  @@index([parentId])
+  @@map("categories")
+}
+
+// ─── Product ─────────────────────────────────────────────────────────────────
+
+model Product {
+  id               Int           @id @default(autoincrement())
+  name             String                          // "Bleu de Chanel EDP"
+  slug             String        @unique           // "bleu-de-chanel-edp"
+  shortDescription String?       @db.VarChar(500)
+  description      String?       @db.LongText
+
+  // Phân loại
+  brandId          Int
+  brand            Brand         @relation(fields: [brandId], references: [id])
+  categoryId       Int
+  category         Category      @relation(fields: [categoryId], references: [id])
+
+  // Đặc tính nước hoa
+  concentration    Concentration
+  gender           Gender        @default(UNISEX)
+  originCountry    String?                         // "Pháp", "Ý"
+  topNotes         String?                         // "Chanh, Cam bergamot"
+  middleNotes      String?                         // "Hoa nhài, Hoa hồng"
+  baseNotes        String?                         // "Xạ hương, Đàn hương"
+  longevity        Int?                            // giờ lưu hương (ước tính)
+  sillage          Int?                            // 1–5 độ tỏa hương
+
+  // Ảnh chính
+  thumbnail        String?
+
+  // Trạng thái
+  isFeatured       Boolean       @default(false)
+  isActive         Boolean       @default(true)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  images    ProductImage[]
+  variants  ProductVariant[]
+
+  @@index([brandId])
+  @@index([categoryId])
+  @@index([slug])
+  @@map("products")
+}
+
+// ─── ProductImage ─────────────────────────────────────────────────────────────
+
+model ProductImage {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  altText   String?
+  sortOrder Int     @default(0)
+
+  @@index([productId])
+  @@map("product_images")
+}
+
+// ─── ProductVariant (các dung tích khác nhau) ────────────────────────────────
+
+model ProductVariant {
+  id        Int     @id @default(autoincrement())
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  volume    Int                 // ml: 30, 50, 100
+  price     Decimal @db.Decimal(12, 0)
+  salePrice Decimal? @db.Decimal(12, 0)  // nếu đang sale
+  stock     Int     @default(0)
+  sku       String? @unique               // mã SKU kho hàng
+
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@index([productId])
+  @@map("product_variants")
+}
+
+// ─── Cart ─────────────────────────────────────────────────────────────────────
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    Int        @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  items     CartItem[]
+
+  @@map("carts")
+}
+
+// ─── CartItem ─────────────────────────────────────────────────────────────────
+
+model CartItem {
+  id        Int            @id @default(autoincrement())
+  cartId    Int
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variantId Int
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  quantity  Int            @default(1)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  @@unique([cartId, variantId])
+  @@index([cartId])
+  @@index([variantId])
+  @@map("cart_items")
+}
+
+// ─── Enums đơn hàng ──────────────────────────────────────────────────────────
+
+enum OrderStatus {
+  PENDING      // Chờ xác nhận
+  CONFIRMED    // Đã xác nhận
+  SHIPPING     // Đang giao hàng
+  DELIVERED    // Đã giao hàng
+  CANCELLED    // Đã hủy
+}
+
+enum PaymentMethod {
+  COD          // Tiền mặt khi nhận hàng
+}
+
+enum PaymentStatus {
+  UNPAID       // Chưa thanh toán
+  PAID         // Đã thanh toán
+}
+
+// ─── Order ───────────────────────────────────────────────────────────────────
+
+model Order {
+  id              Int           @id @default(autoincrement())
+  userId          Int
+  user            User          @relation(fields: [userId], references: [id])
+
+  // Thông tin giao hàng
+  receiverName    String
+  receiverPhone   String
+  shippingAddress String        @db.VarChar(500)
+  note            String?       @db.Text
+
+  // Tài chính
+  totalAmount     Decimal       @db.Decimal(12, 0)
+  shippingFee     Decimal       @default(0) @db.Decimal(12, 0)
+
+  // Thanh toán
+  paymentMethod   PaymentMethod @default(COD)
+  paymentStatus   PaymentStatus @default(UNPAID)
+
+  // Trạng thái đơn
+  status          OrderStatus   @default(PENDING)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+
+  items           OrderItem[]
+
+  @@index([userId])
+  @@map("orders")
+}
+
+// ─── OrderItem ───────────────────────────────────────────────────────────────
+
+model OrderItem {
+  id           Int            @id @default(autoincrement())
+  orderId      Int
+  order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variantId    Int
+  variant      ProductVariant @relation(fields: [variantId], references: [id])
+
+  productName  String                          // snapshot tên sản phẩm lúc đặt
+  volume       Int                             // snapshot dung tích (ml)
+  priceAtOrder Decimal        @db.Decimal(12, 0)  // snapshot giá lúc đặt
+  quantity     Int            @default(1)
+
+  @@index([orderId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+// ─── Queue ───────────────────────────────────────────────────────────────────
+
+enum QueueStatus {
+  PENDING
+  INPROGRESS
+  COMPLETED
+  FAILED
+}
+
+model Queue {
+  id        Int         @id @default(autoincrement())
+  type      String
+  payload   String      @db.Text
+  status    QueueStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([status])
+  @@map("queues")
+}
