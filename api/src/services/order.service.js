@@ -42,7 +42,13 @@ class OrderService {
   // Tạo đơn hàng từ giỏ hàng
   async createMyOrder(
     userId,
-    { receiverName, receiverPhone, shippingAddress, note },
+    {
+      receiverName,
+      receiverPhone,
+      shippingAddress,
+      note,
+      paymentMethod = "COD",
+    },
   ) {
     // 1. Validate input
     if (!receiverName) {
@@ -99,7 +105,7 @@ class OrderService {
           shippingAddress,
           note: note ?? null,
           totalAmount,
-          paymentMethod: "COD",
+          paymentMethod,
           paymentStatus: "UNPAID",
           status: "PENDING",
           items: {

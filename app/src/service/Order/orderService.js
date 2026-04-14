@@ -52,3 +52,16 @@ export const cancelOrder = createAsyncThunk(
     }
   },
 );
+
+// [POST] /api/vnpay/create — Tạo order + lấy payUrl VNPAY sandbox
+export const createVnpayOrder = createAsyncThunk(
+  "order/createVnpayOrder",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await http.post("vnpay/create", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);

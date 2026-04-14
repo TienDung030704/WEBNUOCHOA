@@ -19,8 +19,9 @@ app.use(express.json());
 // parse form-urlencoded
 app.use(express.urlencoded({ extended: true }));
 
-// custom response
+// Middlewares
 app.use(responseHandle);
+app.use(express.static("public"));
 
 // routes
 app.use("/api", rootRouter);

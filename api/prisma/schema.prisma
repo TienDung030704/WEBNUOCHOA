@@ -38,6 +38,7 @@ model User {
   refreshTokens   RefreshToken[]
   cart             Cart?
   orders           Order[]
+  posts            Post[]
 
   @@map("users")
 }
@@ -231,6 +232,7 @@ enum OrderStatus {
 
 enum PaymentMethod {
   COD          // Tiền mặt khi nhận hàng
+  VNPAY        // Thanh toán qua VNPay
 }
 
 enum PaymentStatus {
@@ -309,4 +311,40 @@ model Queue {
 
   @@index([status])
   @@map("queues")
+}
+
+// ─── Blog ────────────────────────────────────────────────────────────────────
+
+model PostIdea {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  posts       Post[]
+
+  @@map("post_ideas")
+}
+
+model Post {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  postIdeaId  Int
+  postIdea    PostIdea  @relation(fields: [postIdeaId], references: [id])
+  title       String
+  description String    @db.Text
+  slug        String    @unique
+  image       String
+  content     String    @db.Text
+  minRead     Int?
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([postIdeaId])
+  @@index([slug])
+  @@map("posts")
 }

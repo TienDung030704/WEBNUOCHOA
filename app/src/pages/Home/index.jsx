@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import { NavLink } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { ArrowRight, ChevronDown } from "lucide-react";
@@ -12,47 +14,14 @@ function HomePage() {
   const dispatch = useDispatch();
   const bestSellers = useSelector((state) => state.product.featuredProducts);
 
-  // ── Best sellers step-scroll ──
-  const trackRef = useRef(null);
-  const [step, setStep] = useState(0);
-  const [cardWidth, setCardWidth] = useState(276);
+  const [emblaRef] = useEmblaCarousel(
+    { loop: true, align: "start", slidesToScroll: 1 },
+    [Autoplay({ delay: 3000, stopOnInteraction: false })],
+  );
 
   useEffect(() => {
     dispatch(fetchFeaturedProducts());
   }, [dispatch]);
-
-  // Measure actual card width after products load
-  useEffect(() => {
-    if (!trackRef.current || !bestSellers.length) return;
-    const card = trackRef.current.querySelector("a");
-    if (card) setCardWidth(card.offsetWidth + 16); // width + gap-4
-  }, [bestSellers]);
-
-  // Advance one step every 3s
-  useEffect(() => {
-    if (!bestSellers.length) return;
-    const id = setInterval(() => setStep((prev) => prev + 1), 3000);
-    return () => clearInterval(id);
-  }, [bestSellers.length]);
-
-  // Seamless infinite reset: when we've scrolled into the duplicate copy, snap back
-  useEffect(() => {
-    if (step >= bestSellers.length && bestSellers.length > 0) {
-      const tid = setTimeout(() => {
-        const el = trackRef.current;
-        if (el) el.style.transition = "none";
-        setStep(0);
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => {
-            if (trackRef.current)
-              trackRef.current.style.transition =
-                "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)";
-          }),
-        );
-      }, 650);
-      return () => clearTimeout(tid);
-    }
-  }, [step, bestSellers.length]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -230,18 +199,11 @@ function HomePage() {
               Danh Sách Sản phẩm
             </h2>
 
-            <div className="overflow-hidden">
-              <div
-                ref={trackRef}
-                className="flex gap-4 px-[22px]"
-                style={{
-                  transform: `translateX(-${step * cardWidth}px)`,
-                  transition: "transform 0.55s cubic-bezier(0.4, 0, 0.2, 1)",
-                }}
-              >
-                {[...bestSellers, ...bestSellers].map((product, i) => (
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-4 px-[22px]">
+                {bestSellers.map((product) => (
                   <NavLink
-                    key={i}
+                    key={product.id}
                     to={`/san-pham/${product.slug}`}
                     className="group w-[220px] shrink-0 sm:w-[260px]"
                   >

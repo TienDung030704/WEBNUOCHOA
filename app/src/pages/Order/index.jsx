@@ -1,6 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { formatPrice } from "@/utils/formatPrice";
-import { ChevronRight, Banknote } from "lucide-react";
+import { ChevronRight, Banknote, CreditCard } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { checkoutSchema } from "@/utils/validate";
@@ -10,7 +10,7 @@ import { getMyCarts } from "@/service/Cart/cartService";
 import provinces from "@/mocks/provinces.json";
 import wardsByCity from "@/mocks/wards-by-city.json";
 import districtsByCity from "@/mocks/districts-by-city.json";
-import { createOrder } from "@/service/Order/orderService";
+import { createOrder, createVnpayOrder } from "@/service/Order/orderService";
 import { toast } from "sonner";
 
 function OrderPage() {
@@ -19,6 +19,7 @@ function OrderPage() {
   const navigate = useNavigate();
   const [districts, setDistricts] = useState([]);
   const [wards, setWards] = useState([]);
+  const [paymentMethod, setPaymentMethod] = useState("COD");
 
   useEffect(() => {
     dispatch(getMyCarts());
@@ -65,17 +66,23 @@ function OrderPage() {
   };
 
   const onSubmit = async (data) => {
+    const payload = {
+      receiverName: data.receiverName,
+      receiverPhone: data.receiverPhone,
+      note: data.note,
+      shippingAddress: `${data.address}, ${data.ward}, ${data.district}, ${data.city}`,
+    };
+
     try {
-      // kh cần gửi sản phẩm cần thanh toán vào trong payload vì ở be đã có phần xử lí lấy token của userId ra để xác thực thì trong token đó có thể lấy đc luôn sp trong giỏ hàng của userId đó r
-      const payload = {
-        receiverName: data.receiverName,
-        receiverPhone: data.receiverPhone,
-        note: data.note,
-        shippingAddress: `${data.address}, ${data.ward}, ${data.district}, ${data.city}`,
-      };
-      const res = await dispatch(createOrder(payload)).unwrap();
-      toast.success("Đặt hàng thành công");
-      navigate(`/dat-hang-thanh-cong/${res.id}`);
+      if (paymentMethod === "VNPAY") {
+        const res = await dispatch(createVnpayOrder(payload)).unwrap();
+        // Redirect sang trang VNPAY sandbox
+        window.location.href = res.payUrl;
+      } else {
+        const res = await dispatch(createOrder(payload)).unwrap();
+        toast.success("Đặt hàng thành công");
+        navigate(`/dat-hang-thanh-cong/${res.id}`);
+      }
     } catch (error) {
       console.log("ERROR FE:", error);
       toast.error("Đặt hàng thất bại ❌");
@@ -495,22 +502,76 @@ function OrderPage() {
                 <h3 className="mb-4 text-[14px] font-semibold text-white">
                   Phương thức thanh toán
                 </h3>
-                <div className="rounded-lg border border-white/15 bg-white/5 p-4">
-                  <label className="flex cursor-pointer items-start gap-3">
-                    {/* Radio */}
-                    <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 border-white/50 bg-transparent">
-                      <div className="h-2 w-2 rounded-full bg-white" />
+                <div className="space-y-3">
+                  {/* COD */}
+                  <label
+                    className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
+                      paymentMethod === "COD"
+                        ? "border-white/40 bg-white/8"
+                        : "border-white/12 bg-white/3 hover:border-white/25"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="COD"
+                      checked={paymentMethod === "COD"}
+                      onChange={() => setPaymentMethod("COD")}
+                      className="sr-only"
+                    />
+                    <div
+                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${paymentMethod === "COD" ? "border-white" : "border-white/35"}`}
+                    >
+                      {paymentMethod === "COD" && (
+                        <div className="h-2 w-2 rounded-full bg-white" />
+                      )}
                     </div>
-                    <div className="space-y-1.5">
+                    <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <Banknote size={16} className="text-white/55" />
                         <span className="text-[14px] font-medium text-white/85">
                           Thanh toán tiền mặt (COD)
                         </span>
                       </div>
-                      <p className="text-[14px] leading-relaxed text-white/45">
-                        Thanh toán khi nhận hàng. Vui lòng chuẩn bị đúng số tiền
-                        để thuận tiện cho việc giao nhận.
+                      <p className="text-[13px] leading-relaxed text-white/40">
+                        Thanh toán khi nhận hàng.
+                      </p>
+                    </div>
+                  </label>
+
+                  {/* VNPAY */}
+                  <label
+                    className={`flex cursor-pointer items-start gap-3 rounded-lg border p-4 transition-colors ${
+                      paymentMethod === "VNPAY"
+                        ? "border-[#0060a8]/60 bg-[#0060a8]/10"
+                        : "border-white/12 bg-white/3 hover:border-white/25"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      value="VNPAY"
+                      checked={paymentMethod === "VNPAY"}
+                      onChange={() => setPaymentMethod("VNPAY")}
+                      className="sr-only"
+                    />
+                    <div
+                      className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 transition-colors ${paymentMethod === "VNPAY" ? "border-[#0060a8]" : "border-white/35"}`}
+                    >
+                      {paymentMethod === "VNPAY" && (
+                        <div className="h-2 w-2 rounded-full bg-[#0060a8]" />
+                      )}
+                    </div>
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <CreditCard size={16} className="text-[#0060a8]" />
+                        <span className="text-[14px] font-medium text-white/85">
+                          VNPay
+                        </span>
+                      </div>
+                      <p className="text-[13px] leading-relaxed text-white/40">
+                        Thanh toán qua cổng VNPay (ATM, Visa, QR Code). Bạn sẽ
+                        được chuyển sang trang VNPay để hoàn tất.
                       </p>
                     </div>
                   </label>

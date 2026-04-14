@@ -29,6 +29,8 @@ import AdminOrderDetail from "@/pages/Admin/OrderDetail";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import EditProduct from "@/pages/Admin/EditProduct";
 import VerifyEmail from "@/pages/Auth/VerifyEmail";
+import BlogListPage from "@/pages/Blog/BlogList";
+import BlogDetailPage from "@/pages/Blog/BlogDetail";
 
 function AppRoutes() {
   return (
@@ -50,6 +52,8 @@ function AppRoutes() {
         <Route path="/gio-hang" element={<Cart />} />
         <Route path="/thanh-toan" element={<OrderPage />} />
         <Route path="/dat-hang-thanh-cong/:id" element={<OrderSuccess />} />
+        <Route path="/kien-thuc-nuoc-hoa" element={<BlogListPage />} />
+        <Route path="/kien-thuc-nuoc-hoa/:slug" element={<BlogDetailPage />} />
       </Route>
       {/* AuthLayout */}
       <Route element={<AuthLayout />}>

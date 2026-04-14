@@ -424,7 +424,9 @@ class AdminService {
       where: { id: Number(orderId) },
     });
 
-    if (!order) throw new Error("Không tìm thấy đơn hàng");
+    if (!order) {
+      throw new Error("Không tìm thấy đơn hàng");
+    }
 
     const dataToUpdate = {};
 
