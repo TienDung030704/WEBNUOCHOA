@@ -156,6 +156,12 @@ class AdminService {
     description,
     usage,
     policy,
+    topNotes,
+    middleNotes,
+    baseNotes,
+    longevity,
+    sillage,
+    originCountry,
   }) {
     try {
       // 1. Validate
@@ -223,6 +229,12 @@ class AdminService {
           description: description ?? null,
           usage: usage ?? null,
           policy: policy ?? null,
+          topNotes: topNotes?.trim() || null,
+          middleNotes: middleNotes?.trim() || null,
+          baseNotes: baseNotes?.trim() || null,
+          longevity: longevity ? Number(longevity) : null,
+          sillage: sillage ? Number(sillage) : null,
+          originCountry: originCountry?.trim() || null,
 
           variants: {
             create: variantData,
@@ -283,6 +295,12 @@ class AdminService {
       description,
       usage,
       policy,
+      topNotes,
+      middleNotes,
+      baseNotes,
+      longevity,
+      sillage,
+      originCountry,
     },
   ) {
     try {
@@ -305,6 +323,18 @@ class AdminService {
         dataToUpdate.description = description || null;
       if (usage !== undefined) dataToUpdate.usage = usage || null;
       if (policy !== undefined) dataToUpdate.policy = policy || null;
+      if (topNotes !== undefined)
+        dataToUpdate.topNotes = topNotes?.trim() || null;
+      if (middleNotes !== undefined)
+        dataToUpdate.middleNotes = middleNotes?.trim() || null;
+      if (baseNotes !== undefined)
+        dataToUpdate.baseNotes = baseNotes?.trim() || null;
+      if (longevity !== undefined)
+        dataToUpdate.longevity = longevity ? Number(longevity) : null;
+      if (sillage !== undefined)
+        dataToUpdate.sillage = sillage ? Number(sillage) : null;
+      if (originCountry !== undefined)
+        dataToUpdate.originCountry = originCountry?.trim() || null;
 
       if (brandName) {
         const brand = await this.findBrand(brandName);

@@ -57,6 +57,12 @@ const createProductByAdmin = async (req, res) => {
       description,
       usage,
       policy,
+      topNotes,
+      middleNotes,
+      baseNotes,
+      longevity,
+      sillage,
+      originCountry,
     } = req.body;
     const result = await adminService.createProduct({
       name,
@@ -73,6 +79,12 @@ const createProductByAdmin = async (req, res) => {
       description,
       usage,
       policy,
+      topNotes,
+      middleNotes,
+      baseNotes,
+      longevity,
+      sillage,
+      originCountry,
     });
     res.status(201).json(result);
   } catch (error) {

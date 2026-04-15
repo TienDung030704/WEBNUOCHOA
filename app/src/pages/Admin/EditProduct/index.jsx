@@ -73,6 +73,12 @@ function EditProduct() {
           description: result.description ?? "",
           usage: result.usage ?? "",
           policy: result.policy ?? "",
+          originCountry: result.originCountry ?? "",
+          topNotes: result.topNotes ?? "",
+          middleNotes: result.middleNotes ?? "",
+          baseNotes: result.baseNotes ?? "",
+          longevity: result.longevity ?? "",
+          sillage: result.sillage ?? "",
           variants: result.variants?.length
             ? result.variants.map(
                 ({ volume, price, salePrice, stock, sku }) => ({
@@ -417,6 +423,79 @@ function EditProduct() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Đặc tính nước hoa */}
+        <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
+          <h2 className="mb-5 text-[15px] font-semibold text-white">
+            Đặc tính nước hoa
+          </h2>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">Xuất xứ</label>
+              <input
+                {...register("originCountry")}
+                placeholder="Pháp, Ý, Mỹ..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Độ lưu hương (giờ)
+              </label>
+              <input
+                {...register("longevity")}
+                type="number"
+                min="0"
+                max="24"
+                placeholder="8"
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Hương đầu (Top notes)
+              </label>
+              <input
+                {...register("topNotes")}
+                placeholder="Chanh, Cam bergamot, Bưởi..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Hương giữa (Middle notes)
+              </label>
+              <input
+                {...register("middleNotes")}
+                placeholder="Hoa hồng, Hoa nhài, Iris..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
+            <div className="col-span-2 flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Hương cuối (Base notes)
+              </label>
+              <input
+                {...register("baseNotes")}
+                placeholder="Xạ hương, Đàn hương, Vanilla..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Độ tỏa hương (1–5)
+              </label>
+              <input
+                {...register("sillage")}
+                type="number"
+                min="1"
+                max="5"
+                placeholder="3"
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25"
+              />
+            </div>
           </div>
         </div>
 

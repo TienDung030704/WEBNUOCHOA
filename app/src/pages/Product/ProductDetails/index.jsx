@@ -342,9 +342,52 @@ function ProductDetailsPage() {
             {/* Tab content: tab nào đang active thì hiện nội dung của tab đó */}
             <div className="mt-6 text-[15px] leading-relaxed text-white/75 whitespace-pre-line">
               {activeTab === "description" && (
-                <p>
-                  {detailProducts?.description || "Chưa có mô tả sản phẩm."}
-                </p>
+                <div className="space-y-5">
+                  {/* Notes cấu trúc (nếu có) */}
+                  {(detailProducts?.topNotes ||
+                    detailProducts?.middleNotes ||
+                    detailProducts?.baseNotes) && (
+                    <div className="space-y-3">
+                      {detailProducts.topNotes && (
+                        <div>
+                          <span className="text-white/40 text-[13px] uppercase tracking-wider">
+                            Hương đầu
+                          </span>
+                          <p className="mt-1">{detailProducts.topNotes}</p>
+                        </div>
+                      )}
+                      {detailProducts.middleNotes && (
+                        <div>
+                          <span className="text-white/40 text-[13px] uppercase tracking-wider">
+                            Hương giữa
+                          </span>
+                          <p className="mt-1">{detailProducts.middleNotes}</p>
+                        </div>
+                      )}
+                      {detailProducts.baseNotes && (
+                        <div>
+                          <span className="text-white/40 text-[13px] uppercase tracking-wider">
+                            Hương cuối
+                          </span>
+                          <p className="mt-1">{detailProducts.baseNotes}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Văn xuôi mô tả (nếu có) */}
+                  {detailProducts?.description && (
+                    <p>{detailProducts.description}</p>
+                  )}
+
+                  {/* Fallback nếu không có gì */}
+                  {!detailProducts?.description &&
+                    !detailProducts?.topNotes &&
+                    !detailProducts?.middleNotes &&
+                    !detailProducts?.baseNotes && (
+                      <p>Chưa có mô tả sản phẩm.</p>
+                    )}
+                </div>
               )}
               {activeTab === "usage" && (
                 <p>{detailProducts?.usage || "Chưa có hướng dẫn sử dụng."}</p>
