@@ -240,6 +240,21 @@
   }
 }
 
+@keyframes tabFadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tab-content-enter {
+  animation: tabFadeIn 0.25s ease-out both;
+}
+
 .catalog-page-enter {
   animation: pageFadeUp 0.9s ease-out both;
 }

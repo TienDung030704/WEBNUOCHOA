@@ -340,7 +340,10 @@ function ProductDetailsPage() {
             </div>
 
             {/* Tab content: tab nào đang active thì hiện nội dung của tab đó */}
-            <div className="mt-6 text-[15px] leading-relaxed text-white/75 whitespace-pre-line">
+            <div
+              key={activeTab}
+              className="tab-content-enter mt-6 text-[15px] leading-relaxed text-white/75 whitespace-pre-line"
+            >
               {activeTab === "description" && (
                 <div className="space-y-5">
                   {/* Notes cấu trúc (nếu có) */}
