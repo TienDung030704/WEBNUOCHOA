@@ -15,4 +15,6 @@ router.post("/refresh-token", authController.refreshToken);
 router.post("/send-verify-email", authController.verifyedSendEmailUser);
 // [POST] /api/auth/verify-email
 router.post("/verify-email", authController.verifyedEmail);
+// [POST] /api/auth/google
+router.post("/google", authController.googleLogin);
 module.exports = router;

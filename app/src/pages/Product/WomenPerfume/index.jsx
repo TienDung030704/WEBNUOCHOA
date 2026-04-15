@@ -1,3 +1,4 @@
+import { useState, useMemo } from "react";
 import { ChevronRight, Funnel } from "lucide-react";
 import { formatVariantPrice } from "@/utils/formatPrice";
 import PerfumeCategorySidebar from "@/components/PerfumeCategorySidebar";
@@ -6,17 +7,23 @@ import { useNavigate } from "react-router-dom";
 import Pagination from "@/components/Panigation";
 import usePagination from "@/hooks/usePagination";
 import useProductFilter from "@/utils/productFilter";
+import { sortProducts } from "@/utils/sortProducts";
 
 function WomenPerfumePage() {
   const navigate = useNavigate();
   const { displayProducts } = useProductFilter("FEMALE");
+  const [sortKey, setSortKey] = useState("newest");
+  const sortedProducts = useMemo(
+    () => sortProducts(displayProducts, sortKey),
+    [displayProducts, sortKey],
+  );
 
   const {
     page,
     totalPages,
     currentItems: currentProducts,
     handlePageChange,
-  } = usePagination(displayProducts);
+  } = usePagination(sortedProducts);
 
   return (
     <div className="catalog-page-enter min-h-screen bg-[#1b1b1b] text-white">
@@ -55,7 +62,7 @@ function WomenPerfumePage() {
                 <Funnel size={16} />
                 Bộ lọc
               </button>
-              <SortDropdown />
+              <SortDropdown value={sortKey} onChange={setSortKey} />
             </div>
 
             {/* PRODUCT GRID */}

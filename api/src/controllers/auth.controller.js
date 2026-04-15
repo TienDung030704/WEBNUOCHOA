@@ -69,6 +69,15 @@ const verifyedEmail = async (req, res) => {
       .json({ message: error.message });
   }
 };
+const googleLogin = async (req, res) => {
+  try {
+    const { accessToken } = req.body;
+    const result = await authService.handleGoogleLogin(accessToken);
+    res.success(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 module.exports = {
   register,
   login,
@@ -76,4 +85,5 @@ module.exports = {
   refreshToken,
   verifyedSendEmailUser,
   verifyedEmail,
+  googleLogin,
 };

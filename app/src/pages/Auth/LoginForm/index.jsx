@@ -6,10 +6,12 @@ import { useForm } from "react-hook-form";
 import { loginSchema } from "@/utils/validate";
 import { toast } from "sonner";
 import { useDispatch } from "react-redux";
-import { authLogin } from "@/service/Auth/AuthService";
+import { authLogin, authGoogleLogin } from "@/service/Auth/AuthService";
+import { useGoogleLogin } from "@react-oauth/google";
+
 function LoginForm() {
   const {
-    register: login, // Đổi tên register thành login
+    register: login,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -19,8 +21,38 @@ function LoginForm() {
     },
     resolver: yupResolver(loginSchema),
   });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  // logic đăng nhập bằng gg
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      try {
+        await dispatch(authGoogleLogin(tokenResponse.access_token)).unwrap();
+        toast.success("Đăng nhập Google thành công!", {
+          duration: 2000,
+          position: "top-right",
+        });
+        setTimeout(() => navigate("/"), 1500);
+      } catch (error) {
+        toast.error(
+          error?.message || "Đăng nhập Google thất bại, vui lòng thử lại!",
+          {
+            duration: 3000,
+            position: "top-right",
+          },
+        );
+      }
+    },
+    onError: () => {
+      toast.error("Đăng nhập Google thất bại!", {
+        duration: 3000,
+        position: "top-right",
+      });
+    },
+  });
+
   const onSubmit = async (data) => {
     try {
       const result = await dispatch(authLogin(data)).unwrap();
@@ -29,7 +61,6 @@ function LoginForm() {
         duration: 2000,
         position: "top-right",
       });
-      // Delay chút để user thấy thông báo
       setTimeout(() => {
         navigate("/");
       }, 2000);
@@ -41,9 +72,10 @@ function LoginForm() {
       });
     }
   };
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <div className="min-h-screen bg-[#1f2022] text-white pt-[92px]">
+      <div className="min-h-screen bg-[#1f2022] pt-[92px] text-white">
         <section className="px-[22px] pb-16 pt-14">
           <div className="mx-auto max-w-[1410px]">
             <div className="mb-24 flex items-center gap-3 text-[18px] text-white/95">
@@ -70,8 +102,8 @@ function LoginForm() {
                       className="h-[50px] w-full rounded-[6px] border border-white/14 bg-transparent px-4 text-white outline-none transition-colors placeholder:text-white/35 focus:border-white/25"
                       {...login("email")}
                     />
-                    {errors.login && (
-                      <p className="text-red-500 text-sm mt-1 text-left">
+                    {errors.email && (
+                      <p className="mt-1 text-left text-sm text-red-500">
                         {errors.email.message}
                       </p>
                     )}
@@ -95,7 +127,7 @@ function LoginForm() {
                       </button>
                     </div>
                     {errors.password && (
-                      <p className="text-red-500 text-sm mt-1 text-left">
+                      <p className="mt-1 text-left text-sm text-red-500">
                         {errors.password.message}
                       </p>
                     )}
@@ -138,16 +170,56 @@ function LoginForm() {
                     </NavLink>
                   </p>
 
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-[44px] w-full rounded-[6px] border-white/14 bg-transparent text-[15px] text-white hover:bg-white/10 hover:text-white"
-                  >
-                    <span className="text-[24px] leading-none text-[#ea4335]">
-                      G
-                    </span>
-                    <span>Đăng nhập bằng Google</span>
-                  </Button>
+                  <div className="grid grid-cols-2 gap-3">
+                    <Button
+                      type="button"
+                      onClick={() => googleLogin()}
+                      variant="outline"
+                      className="h-[44px] w-full rounded-[6px] border-white/14 bg-transparent text-[14px] text-white hover:bg-white/10 hover:text-white"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 48 48"
+                        className="shrink-0"
+                      >
+                        <path
+                          fill="#EA4335"
+                          d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"
+                        />
+                        <path
+                          fill="#4285F4"
+                          d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"
+                        />
+                        <path
+                          fill="#FBBC05"
+                          d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"
+                        />
+                        <path
+                          fill="#34A853"
+                          d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.58-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"
+                        />
+                      </svg>
+                      <span>Google</span>
+                    </Button>
+
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="h-[44px] w-full rounded-[6px] border-white/14 bg-transparent text-[14px] text-white hover:bg-white/10 hover:text-white"
+                    >
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        className="shrink-0"
+                        fill="#1877F2"
+                      >
+                        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" />
+                      </svg>
+                      <span>Facebook</span>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>

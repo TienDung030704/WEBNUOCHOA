@@ -29,8 +29,8 @@ function OrderSuccessPage() {
 
         {/* Success */}
         <div className="mb-8 flex flex-col items-center text-center">
-          <div className="success-icon-enter mb-5 flex h-16 w-16 items-center justify-center rounded-full border-2 border-white/30 bg-white/8">
-            <Check size={28} className="text-white" strokeWidth={2.5} />
+          <div className="success-icon-enter mb-5 flex h-20 w-20 items-center justify-center rounded-full border-2 border-green-500/50 bg-green-500/10">
+            <Check size={38} className="text-green-400" strokeWidth={2.5} />
           </div>
           <h1 className="success-title-enter mb-3 text-[34px] font-bold tracking-tight text-white">
             Đặt hàng thành công

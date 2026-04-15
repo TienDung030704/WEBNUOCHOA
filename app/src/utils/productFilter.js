@@ -27,8 +27,13 @@ function useProductFilter(gender) {
     const maxPrice = searchParams.get("price[max]");
 
     const filters = {};
-    if (brandIds.length) filters.brandId = brandIds;
-    if (category) filters.categoryId = Number(category);
+
+    if (brandIds.length) {
+      filters.brandId = brandIds;
+    }
+    if (category) {
+      filters.categoryId = Number(category);
+    }
     if (minPrice || maxPrice) {
       filters.minPrice = Number(minPrice) || 0;
       filters.maxPrice = Number(maxPrice) || 999999999;
@@ -41,7 +46,7 @@ function useProductFilter(gender) {
     }
   }, [searchParams, dispatch]);
 
-  const filterMenPerfume = useMemo(
+  const filterGenderPerfume = useMemo(
     () => product.filter((item) => item.gender === gender),
     [product, gender],
   );
@@ -50,8 +55,8 @@ function useProductFilter(gender) {
     () =>
       filterProduct.length > 0
         ? filterProduct.filter((item) => item.gender === gender)
-        : filterMenPerfume,
-    [filterProduct, filterMenPerfume, gender],
+        : filterGenderPerfume,
+    [filterProduct, filterGenderPerfume, gender],
   );
 
   return { displayProducts };

@@ -54,3 +54,20 @@ export const authVerifyEmail = createAsyncThunk(
     }
   },
 );
+
+export const authGoogleLogin = createAsyncThunk(
+  "auth/authGoogleLogin",
+  async (googleAccessToken, { rejectWithValue }) => {
+    try {
+      const response = await http.post("/auth/google", {
+        accessToken: googleAccessToken,
+      });
+      const { accessToken, refreshToken } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);

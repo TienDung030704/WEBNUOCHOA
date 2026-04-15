@@ -98,6 +98,34 @@ class AuthService {
     return jwt.sign(payload, verifyEmailSecret);
   }
 
+  // Đăng nhập Google OAuth logic
+  async handleGoogleLogin(accessToken) {
+    // Gọi Google userinfo API để lấy thông tin user
+    const res = await fetch("https://www.googleapis.com/oauth2/v3/userinfo", {
+      headers: { Authorization: `Bearer ${accessToken}` },
+    });
+    if (!res.ok) throw new Error("Token Google không hợp lệ");
+    const { email, name, picture } = await res.json();
+
+    // Tìm hoặc tạo user theo email
+    let user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          email,
+          username: name || email.split("@")[0],
+          authProvider: "GOOGLE",
+          isEmailVerified: true,
+          avatar: picture || null,
+        },
+      });
+    }
+
+    const userToken = await this.createAccesstoken(user);
+    const userRefreshToken = await this.createRefreshToken(user);
+    return { user, accessToken: userToken, refreshToken: userRefreshToken };
+  }
+
   // Tạo refresh token
   async createRefreshToken(user) {
     const expiresAt = new Date(Date.now() + authConfig.refreshTokenTTL * 1000);
