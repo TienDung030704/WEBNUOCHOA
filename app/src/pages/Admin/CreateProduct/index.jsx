@@ -48,6 +48,9 @@ function CreateProduct() {
       thumbnail: "",
       isActive: true,
       isFeatured: false,
+      description: "",
+      usage: "",
+      policy: "",
       variants: [{ volume: "", price: "", salePrice: "", stock: "", sku: "" }],
       images: [{ url: "", altText: "" }],
     },
@@ -389,6 +392,46 @@ function CreateProduct() {
                 </button>
               </div>
             ))}
+          </div>
+        </div>
+
+        {/* Mô tả & Nội dung */}
+        <div className="rounded-2xl border border-white/8 bg-white/3 p-6">
+          <h2 className="mb-5 text-[15px] font-semibold text-white">
+            Nội dung & Chính sách
+          </h2>
+          <div className="space-y-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Mô tả sản phẩm
+              </label>
+              <textarea
+                {...register("description")}
+                rows={5}
+                placeholder="Nhập mô tả chi tiết sản phẩm..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25 resize-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">
+                Sử dụng và bảo quản
+              </label>
+              <textarea
+                {...register("usage")}
+                rows={4}
+                placeholder="Hướng dẫn sử dụng và bảo quản..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25 resize-none"
+              />
+            </div>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[13px] text-white/60">Chính sách</label>
+              <textarea
+                {...register("policy")}
+                rows={4}
+                placeholder="Chính sách đổi trả, bảo hành..."
+                className="rounded-xl border border-white/10 bg-white/4 px-4 py-2.5 text-[13px] text-white outline-none placeholder:text-white/30 focus:border-white/25 resize-none"
+              />
+            </div>
           </div>
         </div>
 

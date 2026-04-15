@@ -54,6 +54,9 @@ const createProductByAdmin = async (req, res) => {
       images,
       isActive,
       isFeatured,
+      description,
+      usage,
+      policy,
     } = req.body;
     const result = await adminService.createProduct({
       name,
@@ -67,6 +70,9 @@ const createProductByAdmin = async (req, res) => {
       images,
       isActive,
       isFeatured,
+      description,
+      usage,
+      policy,
     });
     res.status(201).json(result);
   } catch (error) {

@@ -2,6 +2,9 @@ import { addMyCarts, getMyCarts } from "@/service/Cart/cartService";
 import { fetchProductById } from "@/service/Product/ProductService";
 import { buildGalleryImages, getNextIndex } from "@/utils/buildGalleryImages";
 import {
+  BadgeCheck,
+  RefreshCcw,
+  Headphones,
   ChevronRight,
   ChevronLeft,
   Facebook,
@@ -19,7 +22,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 
 function ProductDetailsPage() {
+  // khởi tạo giá trị số lượng chai muốn mua
   const [count, setCount] = useState(1);
+  const [activeTab, setActiveTab] = useState("description");
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { slug } = useParams();
@@ -295,14 +300,93 @@ function ProductDetailsPage() {
         </div>
       </div>
 
-      {/* Policy strip — full width, trên footer */}
-      <div className="border-t border-b border-white/10 py-4">
-        <div className="mx-auto flex max-w-[1280px] items-center justify-between px-6 text-sm text-white/50">
-          <span>Freeship toàn quốc</span>
-          <span className="h-4 w-px bg-white/15" />
-          <span>Chính hãng 100%</span>
-          <span className="h-4 w-px bg-white/15" />
-          <span>Đổi trả miễn phí</span>
+      {/* TABS + SIDEBAR */}
+      <div className="mx-auto max-w-[1280px] px-6 pb-24">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[1fr_320px]">
+          {/* Left: Tabs */}
+          <div>
+            {/* Tab headers: click vào tab nào thì setActiveTab = tên tab đó */}
+            <div className="flex gap-8 border-b border-white/10">
+              <button
+                onClick={() => setActiveTab("description")}
+                className={`pb-3 text-[15px] font-medium transition-colors ${
+                  activeTab === "description"
+                    ? "border-b-2 border-white text-white"
+                    : "text-white/50 hover:text-white/80"
+                }`}
+              >
+                Mô tả sản phẩm
+              </button>
+              <button
+                onClick={() => setActiveTab("usage")}
+                className={`pb-3 text-[15px] font-medium transition-colors ${
+                  activeTab === "usage"
+                    ? "border-b-2 border-white text-white"
+                    : "text-white/50 hover:text-white/80"
+                }`}
+              >
+                Sử dụng và bảo quản
+              </button>
+              <button
+                onClick={() => setActiveTab("policy")}
+                className={`pb-3 text-[15px] font-medium transition-colors ${
+                  activeTab === "policy"
+                    ? "border-b-2 border-white text-white"
+                    : "text-white/50 hover:text-white/80"
+                }`}
+              >
+                Chính sách
+              </button>
+            </div>
+
+            {/* Tab content: tab nào đang active thì hiện nội dung của tab đó */}
+            <div className="mt-6 text-[15px] leading-relaxed text-white/75 whitespace-pre-line">
+              {activeTab === "description" && (
+                <p>
+                  {detailProducts?.description || "Chưa có mô tả sản phẩm."}
+                </p>
+              )}
+              {activeTab === "usage" && (
+                <p>{detailProducts?.usage || "Chưa có hướng dẫn sử dụng."}</p>
+              )}
+              {activeTab === "policy" && (
+                <p>
+                  {detailProducts?.policy || "Chưa có thông tin chính sách."}
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Right: Info cards */}
+          <div className="rounded-xl border border-white/10 bg-white/3 divide-y divide-white/10 h-fit">
+            <div className="flex items-start gap-4 p-5">
+              <BadgeCheck size={22} className="mt-0.5 shrink-0 text-white/50" />
+              <div>
+                <p className="font-semibold text-white">Chính hãng 100%</p>
+                <p className="mt-0.5 text-sm text-white/50">
+                  Cam kết sản phẩm chính hãng 100%
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-5">
+              <RefreshCcw size={22} className="mt-0.5 shrink-0 text-white/50" />
+              <div>
+                <p className="font-semibold text-white">Chính sách đổi trả</p>
+                <p className="mt-0.5 text-sm text-white/50">
+                  Chính sách đổi hàng và tích điểm thành viên
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 p-5">
+              <Headphones size={22} className="mt-0.5 shrink-0 text-white/50" />
+              <div>
+                <p className="font-semibold text-white">Tư vấn &amp; hỗ trợ</p>
+                <p className="mt-0.5 text-sm text-white/50">
+                  Tư vấn và hỗ trợ gói quà miễn phí
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

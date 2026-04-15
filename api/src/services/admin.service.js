@@ -153,6 +153,9 @@ class AdminService {
     images,
     isActive = true,
     isFeatured = false,
+    description,
+    usage,
+    policy,
   }) {
     try {
       // 1. Validate
@@ -217,6 +220,9 @@ class AdminService {
           isFeatured,
           brandId: brand.id,
           categoryId: category.id,
+          description: description ?? null,
+          usage: usage ?? null,
+          policy: policy ?? null,
 
           variants: {
             create: variantData,
@@ -274,6 +280,9 @@ class AdminService {
       isFeatured,
       variants,
       images,
+      description,
+      usage,
+      policy,
     },
   ) {
     try {
@@ -292,6 +301,10 @@ class AdminService {
       if (thumbnail !== undefined) dataToUpdate.thumbnail = thumbnail || null;
       if (isActive !== undefined) dataToUpdate.isActive = isActive;
       if (isFeatured !== undefined) dataToUpdate.isFeatured = isFeatured;
+      if (description !== undefined)
+        dataToUpdate.description = description || null;
+      if (usage !== undefined) dataToUpdate.usage = usage || null;
+      if (policy !== undefined) dataToUpdate.policy = policy || null;
 
       if (brandName) {
         const brand = await this.findBrand(brandName);

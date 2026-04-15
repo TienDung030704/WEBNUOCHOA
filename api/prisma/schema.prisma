@@ -119,7 +119,8 @@ model Product {
   slug             String        @unique           // "bleu-de-chanel-edp"
   shortDescription String?       @db.VarChar(500)
   description      String?       @db.LongText
-
+  usage            String?       @db.LongText      // Sử dụng & bảo quản
+  policy           String?       @db.LongText      // Chính sách
   // Phân loại
   brandId          Int
   brand            Brand         @relation(fields: [brandId], references: [id])
@@ -279,8 +280,8 @@ model OrderItem {
   id           Int            @id @default(autoincrement())
   orderId      Int
   order        Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  variantId    Int
-  variant      ProductVariant @relation(fields: [variantId], references: [id])
+  variantId    Int?
+  variant      ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 
   productName  String                          // snapshot tên sản phẩm lúc đặt
   volume       Int                             // snapshot dung tích (ml)

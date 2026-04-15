@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { NavLink, useNavigate } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ChevronRight, Eye } from "lucide-react";
+import { ChevronRight, Eye, EyeOff } from "lucide-react";
+import { useShowPassword } from "@/utils/showPassword";
 import { useForm } from "react-hook-form";
 import { loginSchema } from "@/utils/validate";
 import { toast } from "sonner";
@@ -24,6 +25,7 @@ function LoginForm() {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { show: showPw, toggle: togglePw } = useShowPassword();
 
   // logic đăng nhập bằng gg
   const googleLogin = useGoogleLogin({
@@ -115,15 +117,16 @@ function LoginForm() {
                     </label>
                     <div className="flex h-[50px] items-center rounded-[6px] border border-white/14 bg-transparent px-4 focus-within:border-white/25">
                       <input
-                        type="password"
+                        type={showPw ? "text" : "password"}
                         className="w-full bg-transparent text-white outline-none placeholder:text-white/35"
                         {...login("password")}
                       />
                       <button
                         type="button"
+                        onClick={togglePw}
                         className="text-white/65 transition-colors hover:text-white"
                       >
-                        <Eye size={20} />
+                        {showPw ? <EyeOff size={20} /> : <Eye size={20} />}
                       </button>
                     </div>
                     {errors.password && (
