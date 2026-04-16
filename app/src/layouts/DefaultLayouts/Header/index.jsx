@@ -72,7 +72,7 @@ function Header() {
             {/* Logo — absolute center */}
             <NavLink to="/" className="absolute left-1/2 -translate-x-1/2">
               <img
-                src="/LogoWeb.png"
+                src="./LogoWeb.png"
                 alt="DUWNG Perfume"
                 className="h-auto w-[140px] sm:w-[170px]"
               />
