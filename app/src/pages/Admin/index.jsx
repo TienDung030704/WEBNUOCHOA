@@ -1,10 +1,11 @@
 import { NavLink, Outlet } from "react-router-dom";
-import { Package, ShoppingBag, Users, ChevronRight } from "lucide-react";
+import { Package, ShoppingBag, Users, Tag, ChevronRight } from "lucide-react";
 
 const NAV_ITEMS = [
   { to: "/admin", label: "Sản phẩm", icon: Package, end: true },
   { to: "/admin/don-hang", label: "Đơn hàng", icon: ShoppingBag },
   { to: "/admin/nguoi-dung", label: "Người dùng", icon: Users },
+  { to: "/admin/thuong-hieu", label: "Thương hiệu", icon: Tag },
 ];
 
 function AdminLayout() {

@@ -156,6 +156,53 @@ const updateOrderStatusByAdmin = async (req, res) => {
   }
 };
 
+const getBrandsByAdmin = async (req, res) => {
+  try {
+    const result = await adminService.getBrandsByAdmin();
+    res.success(result);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const createBrandByAdmin = async (req, res) => {
+  try {
+    const { name, slug, logo, description } = req.body;
+    if (!name || !slug) {
+      return res.status(400).json({ message: "Tên và slug là bắt buộc" });
+    }
+    const result = await adminService.createBrandByAdmin({
+      name,
+      slug,
+      logo,
+      description,
+    });
+    res.success(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const updateBrandByAdmin = async (req, res) => {
+  try {
+    const { brandId } = req.params;
+    const result = await adminService.updateBrandByAdmin(brandId, req.body);
+    res.success(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const deleteBrandByAdmin = async (req, res) => {
+  try {
+    const { brandId } = req.params;
+    const result = await adminService.deleteBrandByAdmin(brandId);
+    res.success(result);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 module.exports = {
   getUsersByAdmin,
   deleteUsersByAdmin,
@@ -167,4 +214,8 @@ module.exports = {
   getOrdersByAdmin,
   getOrderByIdAdmin,
   updateOrderStatusByAdmin,
+  getBrandsByAdmin,
+  createBrandByAdmin,
+  updateBrandByAdmin,
+  deleteBrandByAdmin,
 };

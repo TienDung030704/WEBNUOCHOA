@@ -8,14 +8,14 @@ import { clearFilter } from "@/features/Product/productSlice";
 import { useSearchParams } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-function PerfumeCategorySidebar() {
+function PerfumeCategorySidebar({ initialBrandIds = [] }) {
   const dispatch = useDispatch();
   // phần lấy danh sách các brand và categories
   const brands = useSelector((state) => state.common.brands);
   const categories = useSelector((state) => state.common.categories);
   const [searchParams, setSearchParams] = useSearchParams();
   // Tạo state lưu các gtri vào mảng
-  const [checkBrand, setCheckBrand] = useState([]);
+  const [checkBrand, setCheckBrand] = useState(initialBrandIds);
   const [checkCategories, setcheckCategories] = useState([]);
 
   // phần giá trị khởi tạo cho giá max-min

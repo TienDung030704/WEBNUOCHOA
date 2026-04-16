@@ -4,6 +4,7 @@ import {
   adminGetOrders,
   adminGetOrderById,
   adminUpdateOrderStatus,
+  adminGetBrands,
 } from "@/service/Admin/AdminService";
 import { createSlice } from "@reduxjs/toolkit";
 
@@ -21,6 +22,9 @@ const initialState = {
   currentOrder: null,
   currentOrderLoading: false,
   currentOrderError: null,
+  brands: [],
+  brandsLoading: false,
+  brandsError: null,
 };
 
 export const adminSlice = createSlice({
@@ -97,6 +101,20 @@ export const adminSlice = createSlice({
         if (idx !== -1) {
           state.orders[idx] = { ...state.orders[idx], ...updated };
         }
+      })
+
+      // GET BRANDS
+      .addCase(adminGetBrands.pending, (state) => {
+        state.brandsLoading = true;
+        state.brandsError = null;
+      })
+      .addCase(adminGetBrands.fulfilled, (state, action) => {
+        state.brandsLoading = false;
+        state.brands = action.payload;
+      })
+      .addCase(adminGetBrands.rejected, (state, action) => {
+        state.brandsLoading = false;
+        state.brandsError = action.payload;
       });
   },
 });

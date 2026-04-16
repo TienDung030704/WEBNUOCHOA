@@ -125,3 +125,51 @@ export const adminUpdateOrderStatus = createAsyncThunk(
     }
   },
 );
+
+export const adminGetBrands = createAsyncThunk(
+  "admin/getBrands",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await http.get("/admin/brands");
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);
+
+export const adminCreateBrand = createAsyncThunk(
+  "admin/createBrand",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await http.post("/admin/brands", data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);
+
+export const adminUpdateBrand = createAsyncThunk(
+  "admin/updateBrand",
+  async ({ brandId, data }, { rejectWithValue }) => {
+    try {
+      const response = await http.put(`/admin/brands/${brandId}`, data);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);
+
+export const adminDeleteBrand = createAsyncThunk(
+  "admin/deleteBrand",
+  async (brandId, { rejectWithValue }) => {
+    try {
+      const response = await http.del(`/admin/brands/${brandId}`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.response?.data);
+    }
+  },
+);

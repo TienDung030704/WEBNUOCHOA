@@ -2,10 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { ChevronRight, Funnel } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  fetchProducts,
-  fetchFilterProduct,
-} from "@/service/Product/ProductService";
+import { fetchFilterProduct } from "@/service/Product/ProductService";
 import { clearFilter } from "@/features/Product/productSlice";
 import { useSearchParams } from "react-router-dom";
 import PerfumeCategorySidebar from "@/components/PerfumeCategorySidebar";
@@ -22,23 +19,15 @@ function BrandDetailPage() {
   const [searchParams] = useSearchParams();
 
   const { brands } = useSelector((state) => state.common);
-  const { product, filterProduct } = useSelector((state) => state.product);
+  const { filterProduct } = useSelector((state) => state.product);
 
   const brand = brands.find((b) => b.slug === slug);
 
   const [sortKey, setSortKey] = useState("newest");
 
-  useEffect(() => {
-    dispatch(fetchProducts());
-    return () => {
-      dispatch(clearFilter());
-    };
-  }, [dispatch]);
-
-  // Khi searchParams thay đổi, fetch filter nhưng luôn giữ brandId của trang này
+  // Mỗi khi brand hoặc sidebar filter thay đổi → fetch sản phẩm của brand này
   useEffect(() => {
     if (!brand) return;
-
     const category = searchParams.get("category");
     const minPrice = searchParams.get("price[min]");
     const maxPrice = searchParams.get("price[max]");
@@ -48,23 +37,23 @@ function BrandDetailPage() {
     if (category) {
       filters.categoryId = Number(category);
     }
+
     if (minPrice || maxPrice) {
       filters.minPrice = Number(minPrice) || 0;
       filters.maxPrice = Number(maxPrice) || 999999999;
     }
 
     dispatch(fetchFilterProduct(filters));
+
+    return () => {
+      dispatch(clearFilter());
+    };
   }, [searchParams, brand, dispatch]);
 
-  // Luôn filter theo brand hiện tại
-  const brandProducts = useMemo(() => {
-    const base = filterProduct.length > 0 ? filterProduct : product;
-    return base.filter((p) => p.brandId === brand?.id);
-  }, [filterProduct, product, brand]);
-
+  // filterProduct là kết quả từ API — đã được lọc theo brand + sidebar
   const sorted = useMemo(
-    () => sortProducts(brandProducts, sortKey),
-    [brandProducts, sortKey],
+    () => sortProducts(filterProduct, sortKey),
+    [filterProduct, sortKey],
   );
 
   const { page, totalPages, currentItems, handlePageChange } =
@@ -101,7 +90,9 @@ function BrandDetailPage() {
       <section className="bg-[#202020] py-14">
         <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-8 px-[22px] lg:grid-cols-[290px_1fr]">
           {/* SIDEBAR */}
-          <PerfumeCategorySidebar />
+          <PerfumeCategorySidebar
+            initialBrandIds={brand?.id ? [brand.id] : []}
+          />
 
           {/* MAIN */}
           <div className="space-y-6">

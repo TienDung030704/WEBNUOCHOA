@@ -28,6 +28,9 @@ import AdminUsers from "@/pages/Admin/Users";
 import AdminOrderDetail from "@/pages/Admin/OrderDetail";
 import CreateProduct from "@/pages/Admin/CreateProduct";
 import EditProduct from "@/pages/Admin/EditProduct";
+import AdminBrands from "@/pages/Admin/Brands";
+import CreateBrand from "@/pages/Admin/CreateBrand";
+import EditBrand from "@/pages/Admin/EditBrand";
 import VerifyEmail from "@/pages/Auth/VerifyEmail";
 import BlogListPage from "@/pages/Blog/BlogList";
 import BlogDetailPage from "@/pages/Blog/BlogDetail";
@@ -75,6 +78,9 @@ function AppRoutes() {
         <Route path="don-hang" element={<AdminOrders />} />
         <Route path="don-hang/:id" element={<AdminOrderDetail />} />
         <Route path="nguoi-dung" element={<AdminUsers />} />
+        <Route path="thuong-hieu" element={<AdminBrands />} />
+        <Route path="thuong-hieu/tao-moi" element={<CreateBrand />} />
+        <Route path="thuong-hieu/:brandId/sua" element={<EditBrand />} />
       </Route>
     </Routes>
   );

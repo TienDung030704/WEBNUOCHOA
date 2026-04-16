@@ -497,6 +497,73 @@ class AdminService {
       message: "Cập nhật trạng thái đơn hàng thành công",
     };
   }
+
+  // ─── BRANDS ───────────────────────────────────────────────────────────────
+
+  async getBrandsByAdmin() {
+    return prisma.brand.findMany({
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        logo: true,
+        description: true,
+        isActive: true,
+        createdAt: true,
+        _count: { select: { products: true } },
+      },
+    });
+  }
+
+  async createBrandByAdmin({ name, slug, logo, description }) {
+    const exists = await prisma.brand.findUnique({ where: { slug } });
+    if (exists) {
+      throw new Error("Slug đã tồn tại");
+    }
+    return prisma.brand.create({
+      data: {
+        name,
+        slug,
+        logo: logo || null,
+        description: description || null,
+      },
+    });
+  }
+
+  async updateBrandByAdmin(
+    brandId,
+    { name, slug, logo, description, isActive },
+  ) {
+    const brand = await prisma.brand.findUnique({
+      where: { id: Number(brandId) },
+    });
+    if (!brand) {
+      throw new Error("Thương hiệu không tồn tại");
+    }
+
+    return prisma.brand.update({
+      where: { id: Number(brandId) },
+      data: {
+        ...(name !== undefined && { name }),
+        ...(slug !== undefined && { slug }),
+        ...(logo !== undefined && { logo }),
+        ...(description !== undefined && { description }),
+        ...(isActive !== undefined && { isActive }),
+      },
+    });
+  }
+
+  async deleteBrandByAdmin(brandId) {
+    const brand = await prisma.brand.findUnique({
+      where: { id: Number(brandId) },
+    });
+    if (!brand) {
+      throw new Error("Thương hiệu không tồn tại");
+    }
+    await prisma.brand.delete({ where: { id: Number(brandId) } });
+    return { message: "Xóa thương hiệu thành công" };
+  }
 }
 
 module.exports = new AdminService();

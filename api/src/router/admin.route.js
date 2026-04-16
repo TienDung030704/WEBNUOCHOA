@@ -85,4 +85,36 @@ router.patch(
   adminController.updateOrderStatusByAdmin,
 );
 
+// [GET] /api/admin/brands → lấy danh sách thương hiệu (chỉ admin)
+router.get(
+  "/brands",
+  authRequired,
+  adminRequired,
+  adminController.getBrandsByAdmin,
+);
+
+// [POST] /api/admin/brands → tạo thương hiệu mới
+router.post(
+  "/brands",
+  authRequired,
+  adminRequired,
+  adminController.createBrandByAdmin,
+);
+
+// [PUT] /api/admin/brands/:brandId → cập nhật thương hiệu
+router.put(
+  "/brands/:brandId",
+  authRequired,
+  adminRequired,
+  adminController.updateBrandByAdmin,
+);
+
+// [DELETE] /api/admin/brands/:brandId → xóa thương hiệu
+router.delete(
+  "/brands/:brandId",
+  authRequired,
+  adminRequired,
+  adminController.deleteBrandByAdmin,
+);
+
 module.exports = router;
