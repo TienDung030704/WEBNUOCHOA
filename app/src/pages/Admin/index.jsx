@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { Package, ShoppingBag, Users, Tag, ChevronRight } from "lucide-react";
 
-const NAV_ITEMS = [
-  { to: "/admin", label: "Sản phẩm", icon: Package, end: true },
-  { to: "/admin/don-hang", label: "Đơn hàng", icon: ShoppingBag },
-  { to: "/admin/nguoi-dung", label: "Người dùng", icon: Users },
-  { to: "/admin/thuong-hieu", label: "Thương hiệu", icon: Tag },
-];
+const navCls = ({ isActive }) =>
+  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-all ${
+    isActive
+      ? "bg-white/8 text-white"
+      : "text-white/55 hover:bg-white/5 hover:text-white"
+  }`;
 
 function AdminLayout() {
   return (
@@ -28,23 +28,22 @@ function AdminLayout() {
 
           {/* Nav */}
           <nav className="flex-1 space-y-0.5 px-3">
-            {NAV_ITEMS.map(({ to, label, icon: Icon, end }) => (
-              <NavLink
-                key={to}
-                to={to}
-                end={end}
-                className={({ isActive }) =>
-                  `flex items-center gap-3 rounded-xl px-3 py-2.5 text-[14px] transition-all ${
-                    isActive
-                      ? "bg-white/8 text-white"
-                      : "text-white/55 hover:bg-white/5 hover:text-white"
-                  }`
-                }
-              >
-                <Icon size={17} className="shrink-0" />
-                {label}
-              </NavLink>
-            ))}
+            <NavLink to="/admin" end className={navCls}>
+              <Package size={17} className="shrink-0" />
+              Sản phẩm
+            </NavLink>
+            <NavLink to="/admin/don-hang" className={navCls}>
+              <ShoppingBag size={17} className="shrink-0" />
+              Đơn hàng
+            </NavLink>
+            <NavLink to="/admin/nguoi-dung" className={navCls}>
+              <Users size={17} className="shrink-0" />
+              Người dùng
+            </NavLink>
+            <NavLink to="/admin/thuong-hieu" className={navCls}>
+              <Tag size={17} className="shrink-0" />
+              Thương hiệu
+            </NavLink>
           </nav>
 
           {/* Footer */}
