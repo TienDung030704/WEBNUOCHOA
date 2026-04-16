@@ -60,6 +60,7 @@ class ProductService {
           id: true,
           name: true,
           slug: true,
+          logo: true,
           description: true,
         },
       });

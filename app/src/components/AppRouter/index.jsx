@@ -31,6 +31,8 @@ import EditProduct from "@/pages/Admin/EditProduct";
 import VerifyEmail from "@/pages/Auth/VerifyEmail";
 import BlogListPage from "@/pages/Blog/BlogList";
 import BlogDetailPage from "@/pages/Blog/BlogDetail";
+import BrandPage from "@/pages/Brand";
+import BrandDetailPage from "@/pages/Brand/BrandDetail";
 
 function AppRoutes() {
   return (
@@ -54,6 +56,8 @@ function AppRoutes() {
         <Route path="/dat-hang-thanh-cong/:id" element={<OrderSuccess />} />
         <Route path="/kien-thuc-nuoc-hoa" element={<BlogListPage />} />
         <Route path="/kien-thuc-nuoc-hoa/:slug" element={<BlogDetailPage />} />
+        <Route path="/thuong-hieu" element={<BrandPage />} />
+        <Route path="/thuong-hieu/:slug" element={<BrandDetailPage />} />
       </Route>
       {/* AuthLayout */}
       <Route element={<AuthLayout />}>
