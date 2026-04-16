@@ -104,7 +104,7 @@ function Header() {
             {/* LOGO */}
             <NavLink to="/">
               <img
-                src="/LogoWeb.png"
+                src="./LogoWeb.png"
                 alt="DUWNG Perfume"
                 className="h-auto w-[210px] flex-shrink-0"
               />
