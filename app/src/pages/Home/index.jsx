@@ -8,7 +8,7 @@ import { fetchFeaturedProducts } from "@/service/Product/ProductService";
 import { formatVariantPrice } from "@/utils/formatPrice";
 
 function HomePage() {
-  const backgrounds = ["/bg-1.jpg", "/bg-2.jpg", "/bg-3.jpg"];
+  const backgrounds = ["./bg-1.jpg", "./bg-2.jpg", "./bg-3.jpg"];
   const [activeBackground, setActiveBackground] = useState(0);
 
   const dispatch = useDispatch();
