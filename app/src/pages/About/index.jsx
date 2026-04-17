@@ -33,7 +33,7 @@ function AboutPage() {
             {/* Image 1 */}
             <div className="overflow-hidden rounded-2xl">
               <img
-                src="/bg-4.jpg"
+                src="./bg-4.jpg"
                 alt="DUWNG Perfume collection"
                 className="h-[360px] w-full object-cover transition-transform duration-700 hover:scale-105"
               />
@@ -103,7 +103,7 @@ function AboutPage() {
             {/* Image 2 */}
             <div className="about-img2-enter overflow-hidden rounded-2xl">
               <img
-                src="/bg-5.jpg"
+                src="./bg-5.jpg"
                 alt="DUWNG Perfume store"
                 className="h-[300px] w-full object-cover transition-transform duration-700 hover:scale-105"
               />
