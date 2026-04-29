@@ -10,6 +10,7 @@ const adapter = new PrismaMariaDb({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   allowPublicKeyRetrieval: true,
+  connectTimeout: 30000,
   ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
