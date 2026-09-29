@@ -6,12 +6,14 @@ const prisma = require("../lib/prisma");
 class EmailService {
   async sendVerifyEmail(email, token, subject) {
     try {
-      const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173")
-        .replace(/\/+$/, "");
-      const verificationUrl = `${frontendUrl}/#/verify-email?token=${encodeURIComponent(token)}`;
-      const messageSubject = subject || "Xác thực tài khoản";
-      const text = `Xác thực email tại đây: ${verificationUrl}`;
-      const html = `
+      const info = await transporter.sendMail({
+        from: '"DUWNG Perfume" <nguyentiendungt123@gmail.com>',
+        to: email,
+        subject: subject || "Xác thực tài khoản",
+
+        text: `Xác thực email tại đây: http://localhost:5173/verify-email?token=${token}`,
+
+        html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2>🔐 Xác thực tài khoản</h2>
 
@@ -21,7 +23,7 @@ class EmailService {
 
           <p>Vui lòng nhấn vào nút bên dưới để xác thực email của bạn:</p>
 
-          <a href="${verificationUrl}" 
+          <a href="http://localhost:5173/verify-email?token=${token}" 
              style="
                display:inline-block;
                padding:12px 20px;
@@ -36,46 +38,17 @@ class EmailService {
 
           <p>Hoặc copy link này:</p>
           <p style="color:#555;">
-            ${verificationUrl}
+            http://localhost:5173/verify-email?token=${token}
           </p>
 
           <p style="margin-top:20px;">
             Nếu bạn không đăng ký tài khoản, hãy bỏ qua email này.
           </p>
         </div>
-      `;
-
-      if (process.env.RESEND_API_KEY) {
-        const response = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            from: process.env.RESEND_FROM_EMAIL || "onboarding@resend.dev",
-            to: [email],
-            subject: messageSubject,
-            text,
-            html,
-          }),
-        });
-
-        const result = await response.json().catch(() => ({}));
-        if (!response.ok) {
-          throw new Error(`Resend email API error (${response.status}): ${result.message || "request rejected"}`);
-        }
-        return result;
-      }
-
-      return await transporter.sendMail({
-        from: '"DUWNG Perfume" <nguyentiendungt123@gmail.com>',
-        to: email,
-        subject: messageSubject,
-        text,
-        html,
+      `,
       });
 
+      return info;
     } catch (error) {
       throw error;
     }
