@@ -6,12 +6,15 @@ const prisma = require("../lib/prisma");
 class EmailService {
   async sendVerifyEmail(email, token, subject) {
     try {
+      const frontendUrl = (process.env.FRONTEND_URL || "http://localhost:5173")
+        .replace(/\/+$/, "");
+      const verificationUrl = `${frontendUrl}/#/verify-email?token=${encodeURIComponent(token)}`;
       const info = await transporter.sendMail({
         from: '"DUWNG Perfume" <nguyentiendungt123@gmail.com>',
         to: email,
         subject: subject || "Xác thực tài khoản",
 
-        text: `Xác thực email tại đây: http://localhost:5173/verify-email?token=${token}`,
+        text: `Xác thực email tại đây: ${verificationUrl}`,
 
         html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -23,7 +26,7 @@ class EmailService {
 
           <p>Vui lòng nhấn vào nút bên dưới để xác thực email của bạn:</p>
 
-          <a href="http://localhost:5173/verify-email?token=${token}" 
+          <a href="${verificationUrl}" 
              style="
                display:inline-block;
                padding:12px 20px;
@@ -38,7 +41,7 @@ class EmailService {
 
           <p>Hoặc copy link này:</p>
           <p style="color:#555;">
-            http://localhost:5173/verify-email?token=${token}
+            ${verificationUrl}
           </p>
 
           <p style="margin-top:20px;">

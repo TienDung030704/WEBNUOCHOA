@@ -44,7 +44,7 @@ const verifyedSendEmailUser = async (req, res) => {
         .status(constants.httpCodes.notFound)
         .json({ message: "User không tồn tại" });
     }
-    const token = authService.createVerifyEmailToken(user);
+    const token = await authService.createVerifyEmailToken(user);
     await emailService.sendVerifyEmail(
       email,
       token,
