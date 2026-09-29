@@ -1,6 +1,8 @@
 // Load .env trước tất cả mọi thứ
 
 require("dotenv").config();
+// Render currently has no working IPv6 route to Gmail SMTP; prefer IPv4 DNS results.
+require("node:dns").setDefaultResultOrder("ipv4first");
 const express = require("express");
 const cors = require("cors");
 
