@@ -159,22 +159,6 @@ function Header() {
                 </p>
               </NavLink>
 
-              <div className="group relative">
-                <button className="flex items-center gap-1.5 text-[17px] text-white transition-colors hover:text-gray-300">
-                  Tin tức <ChevronDown size={16} />
-                </button>
-                <div className="pointer-events-none absolute left-1/2 top-full z-50 w-52 -translate-x-1/2 pt-3 opacity-0 transition-all duration-200 group-hover:pointer-events-auto group-hover:opacity-100">
-                  <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#1a1b1d]/96 p-2 shadow-[0_20px_55px_rgba(0,0,0,0.35)] backdrop-blur-xl">
-                    <NavLink
-                      to="/kien-thuc-nuoc-hoa"
-                      className="block rounded-xl px-4 py-3 text-[15px] text-white/85 transition-colors hover:bg-white/8 hover:text-white"
-                    >
-                      Kiến thức nước hoa
-                    </NavLink>
-                  </div>
-                </div>
-              </div>
-
               <NavLink to="/lien-he">
                 <p className="text-[17px] text-white hover:text-gray-300">
                   Liên hệ

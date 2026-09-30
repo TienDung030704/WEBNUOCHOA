@@ -32,8 +32,6 @@ import AdminBrands from "@/pages/Admin/Brands";
 import CreateBrand from "@/pages/Admin/CreateBrand";
 import EditBrand from "@/pages/Admin/EditBrand";
 import VerifyEmail from "@/pages/Auth/VerifyEmail";
-import BlogListPage from "@/pages/Blog/BlogList";
-import BlogDetailPage from "@/pages/Blog/BlogDetail";
 import BrandPage from "@/pages/Brand";
 import BrandDetailPage from "@/pages/Brand/BrandDetail";
 
@@ -57,8 +55,6 @@ function AppRoutes() {
         <Route path="/gio-hang" element={<Cart />} />
         <Route path="/thanh-toan" element={<OrderPage />} />
         <Route path="/dat-hang-thanh-cong/:id" element={<OrderSuccess />} />
-        <Route path="/kien-thuc-nuoc-hoa" element={<BlogListPage />} />
-        <Route path="/kien-thuc-nuoc-hoa/:slug" element={<BlogDetailPage />} />
         <Route path="/thuong-hieu" element={<BrandPage />} />
         <Route path="/thuong-hieu/:slug" element={<BrandDetailPage />} />
       </Route>

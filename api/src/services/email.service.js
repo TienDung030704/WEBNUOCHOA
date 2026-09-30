@@ -6,12 +6,16 @@ const prisma = require("../lib/prisma");
 class EmailService {
   async sendVerifyEmail(email, token, subject) {
     try {
+      //  Lấy frontend URL từ env
+      const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
+      const verifyLink = `${frontendUrl}/verify-email?token=${token}`;
+
       const info = await transporter.sendMail({
         from: '"DUWNG Perfume" <nguyentiendungt123@gmail.com>',
         to: email,
         subject: subject || "Xác thực tài khoản",
 
-        text: `Xác thực email tại đây: http://localhost:5173/verify-email?token=${token}`,
+        text: `Xác thực email tại đây: ${verifyLink}`,
 
         html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
@@ -23,7 +27,7 @@ class EmailService {
 
           <p>Vui lòng nhấn vào nút bên dưới để xác thực email của bạn:</p>
 
-          <a href="http://localhost:5173/verify-email?token=${token}" 
+          <a href="${verifyLink}" 
              style="
                display:inline-block;
                padding:12px 20px;
@@ -38,7 +42,7 @@ class EmailService {
 
           <p>Hoặc copy link này:</p>
           <p style="color:#555;">
-            http://localhost:5173/verify-email?token=${token}
+            ${verifyLink}
           </p>
 
           <p style="margin-top:20px;">
@@ -48,8 +52,10 @@ class EmailService {
       `,
       });
 
+      console.log("Email sent successfully:", info.response);
       return info;
     } catch (error) {
+      console.error("Error sending email:", error);
       throw error;
     }
   }
@@ -57,20 +63,24 @@ class EmailService {
   async verifyEmail(verifyToken) {
     try {
       const payload = jwt.verify(verifyToken, verifyEmailSecret);
+
       if (payload.exp < Math.floor(Date.now() / 1000)) {
-        throw {
-          message: "Token hết hạn",
-        };
+        throw new Error("Token hết hạn");
       }
+
       const userId = payload.sub;
 
       await prisma.user.update({
         where: { id: userId },
         data: { isEmailVerified: true },
       });
+
+      return { success: true };
     } catch (error) {
+      console.error("Error verifying email:", error);
       throw error;
     }
   }
 }
+
 module.exports = new EmailService();

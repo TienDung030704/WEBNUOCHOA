@@ -71,7 +71,7 @@ export const adminEditProduct = createAsyncThunk(
       return rejectWithValue(error.response?.data);
     }
   },
-);
+)
 
 export const adminGetProductById = createAsyncThunk(
   "admin/getProductById",
