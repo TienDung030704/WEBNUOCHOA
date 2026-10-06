@@ -14,6 +14,7 @@ function PerfumeCategorySidebar({ initialBrandIds = [] }) {
   const brands = useSelector((state) => state.common.brands);
   const categories = useSelector((state) => state.common.categories);
   const [searchParams, setSearchParams] = useSearchParams();
+
   // Tạo state lưu các gtri vào mảng
   const [checkBrand, setCheckBrand] = useState(initialBrandIds);
   const [checkCategories, setcheckCategories] = useState([]);
@@ -21,9 +22,11 @@ function PerfumeCategorySidebar({ initialBrandIds = [] }) {
   // phần giá trị khởi tạo cho giá max-min
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(17500000);
+
   //phần làm debounce
   const [searchValue, setSearchValue] = useState("");
   const debounceSearchValue = useDebounce(searchValue, 300);
+
   // phần lọc khi user nhập tên tìm kiếm thương hiệu chuyển về chữ thường hết và so sánh xem có kí tự
   // trong mảng hay kh
   const filterBrand = brands.filter((item) =>

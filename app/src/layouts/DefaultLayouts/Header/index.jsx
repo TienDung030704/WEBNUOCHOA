@@ -72,7 +72,7 @@ function Header() {
             {/* Logo — absolute center */}
             <NavLink to="/" className="absolute left-1/2 -translate-x-1/2">
               <img
-                src="./LogoWeb.png"
+                src={`${import.meta.env.BASE_URL}LogoWeb.png`}
                 alt="DUWNG Perfume"
                 className="h-auto w-[140px] sm:w-[170px]"
               />
@@ -104,7 +104,7 @@ function Header() {
             {/* LOGO */}
             <NavLink to="/">
               <img
-                src="./LogoWeb.png"
+                src={`${import.meta.env.BASE_URL}LogoWeb.png`}
                 alt="DUWNG Perfume"
                 className="h-auto w-[210px] flex-shrink-0"
               />

@@ -126,6 +126,21 @@ class AuthService {
     return { user, accessToken: userToken, refreshToken: userRefreshToken };
   }
 
+  // Trong class AuthService, thêm method này:
+  async verifyEmail(token) {
+    try {
+      if (!token) {
+        throw new Error("Token không hợp lệ");
+      }
+      // Gọi email service verify (nó sẽ check token & update DB)
+      await emailService.verifyEmail(token);
+      return { message: "Email xác thực thành công!" };
+    } catch (error) {
+      console.error("❌ Verify error:", error.message);
+      throw error;
+    }
+  }
+
   // Tạo refresh token
   async createRefreshToken(user) {
     const expiresAt = new Date(Date.now() + authConfig.refreshTokenTTL * 1000);

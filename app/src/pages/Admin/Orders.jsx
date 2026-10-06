@@ -1,7 +1,8 @@
+import useDebounce from "@/hooks/useDebounce";
 import { adminGetOrders } from "@/service/Admin/AdminService";
 import { formatPrice } from "@/utils/formatPrice";
 import { Search, Eye, ChevronLeft, ChevronRight } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +22,22 @@ function Orders() {
   const ordersTotal = useSelector((state) => state.admin.ordersTotal);
   const ordersLoading = useSelector((state) => state.admin.ordersLoading);
 
+  const [searchValue, setSearchValue] = useState("");
+  const debounceSearch = useDebounce(searchValue, 100);
+
+  const searchText = debounceSearch.trim().toLowerCase();
+  const filteredOrders = order.filter((item) => {
+    const orderId = String(item.id).toLowerCase();
+    const customerName = (item.user?.fullName ?? "").toLowerCase();
+    const customerEmail = (item.user?.email ?? "").toLowerCase();
+
+    return (
+      orderId.includes(searchText) ||
+      customerName.includes(searchText) ||
+      customerEmail.includes(searchText)
+    );
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -30,7 +47,7 @@ function Orders() {
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="catalog-page-enter">
@@ -49,6 +66,8 @@ function Orders() {
           <input
             type="text"
             placeholder="Tìm theo tên khách, mã đơn..."
+            value={searchValue}
+            onChange={(event) => setSearchValue(event.target.value)}
             className="w-full bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
           />
         </div>
@@ -110,8 +129,17 @@ function Orders() {
                     Chưa có dữ liệu
                   </td>
                 </tr>
+              ) : filteredOrders.length === 0 ? (
+                <tr>
+                  <td
+                    className="px-5 py-10 text-center text-[13px] text-white/30"
+                    colSpan={7}
+                  >
+                    Không tìm thấy đơn hàng phù hợp
+                  </td>
+                </tr>
               ) : (
-                order.map((item) => {
+                filteredOrders.map((item) => {
                   const status = STATUS_MAP[item.status] ?? {
                     label: item.status,
                     cls: "bg-white/10 text-white/50",
@@ -176,7 +204,7 @@ function Orders() {
         {/* Pagination */}
         <div className="flex items-center justify-between border-t border-white/6 px-5 py-4">
           <p className="text-[13px] text-white/40">
-            Hiển thị {order.length} / {ordersTotal} đơn hàng
+            Hiển thị {filteredOrders.length} / {ordersTotal} đơn hàng
           </p>
           <div className="flex items-center gap-1">
             <button className="rounded-lg border border-white/10 p-2 text-white/50 hover:bg-white/5">

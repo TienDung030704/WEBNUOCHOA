@@ -1,4 +1,5 @@
 import Pagination from "@/components/Panigation";
+import useDebounce from "@/hooks/useDebounce";
 import { adminDeleteUser, adminGetUsers } from "@/service/Admin/AdminService";
 import { Pencil, Search, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -11,14 +12,28 @@ function Users() {
   const dispatch = useDispatch();
   const getUserAdmin = useSelector((state) => state.admin.users);
 
-  // logic xử lý pagination
   const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(getUserAdmin.length / PAGE_SIZE));
-  const pagedUsers = getUserAdmin.slice(
+  const [searchValue, setSearchValue] = useState("");
+  const debounceSearch = useDebounce(searchValue, 200);
+
+  const searchText = debounceSearch.trim().toLowerCase();
+  const filteredUsers = getUserAdmin.filter((user) => {
+    const fullName = (user.fullName || "").toLowerCase();
+    const email = (user.email || "").toLowerCase();
+    const phone = (user.phone || "").toLowerCase();
+
+    return (
+      fullName.includes(searchText) ||
+      email.includes(searchText) ||
+      phone.includes(searchText)
+    );
+  });
+
+  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / PAGE_SIZE));
+  const pagedUsers = filteredUsers.slice(
     (page - 1) * PAGE_SIZE,
     page * PAGE_SIZE,
   );
-  console.log(getUserAdmin);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -29,7 +44,7 @@ function Users() {
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   const handleDeleteUser = async (userId) => {
     const result = await dispatch(adminDeleteUser(userId));
@@ -58,6 +73,11 @@ function Users() {
           <input
             type="text"
             placeholder="Tìm kiếm theo tên, email..."
+            value={searchValue}
+            onChange={(event) => {
+              setSearchValue(event.target.value);
+              setPage(1);
+            }}
             className="w-full bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
           />
         </div>
@@ -110,6 +130,15 @@ function Users() {
                     colSpan={7}
                   >
                     Chưa có dữ liệu
+                  </td>
+                </tr>
+              ) : filteredUsers.length === 0 ? (
+                <tr>
+                  <td
+                    className="px-5 py-10 text-center text-[13px] text-white/30"
+                    colSpan={7}
+                  >
+                    Không tìm thấy người dùng phù hợp
                   </td>
                 </tr>
               ) : (
@@ -167,7 +196,7 @@ function Users() {
         {/* Pagination */}
         <div className="flex items-center justify-between border-t border-white/6 px-5 py-4">
           <p className="text-[13px] text-white/40">
-            Hiển thị {getUserAdmin.length} người dùng
+            Hiển thị {filteredUsers.length} người dùng
           </p>
           <Pagination
             page={page}

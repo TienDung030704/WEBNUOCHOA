@@ -18,11 +18,13 @@ function Brands() {
     dispatch(adminGetBrands());
   }, [dispatch]);
 
-  const filtered = brands.filter(
-    (b) =>
-      b.name.toLowerCase().includes(debounced.toLowerCase()) ||
-      b.slug.toLowerCase().includes(debounced.toLowerCase()),
-  );
+  const searchText = debounced.trim().toLowerCase();
+  const filtered = brands.filter((brand) => {
+    const name = brand.name.toLowerCase();
+    const slug = brand.slug.toLowerCase();
+
+    return name.includes(searchText) || slug.includes(searchText);
+  });
 
   const handleDelete = async (brandId) => {
     try {
@@ -88,13 +90,22 @@ function Brands() {
               </tr>
             </thead>
             <tbody>
-              {filtered.length === 0 ? (
+              {brands.length === 0 ? (
                 <tr className="border-b border-white/5">
                   <td
                     className="px-5 py-10 text-center text-[13px] text-white/30"
                     colSpan={4}
                   >
                     Chưa có dữ liệu
+                  </td>
+                </tr>
+              ) : filtered.length === 0 ? (
+                <tr className="border-b border-white/5">
+                  <td
+                    className="px-5 py-10 text-center text-[13px] text-white/30"
+                    colSpan={4}
+                  >
+                    Không tìm thấy thương hiệu phù hợp
                   </td>
                 </tr>
               ) : (

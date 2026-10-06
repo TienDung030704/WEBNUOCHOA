@@ -6,7 +6,7 @@ const prisma = require("../lib/prisma");
 class EmailService {
   async sendVerifyEmail(email, token, subject) {
     try {
-      //  Lấy frontend URL từ env
+      // ✅ Lấy frontend URL từ env
       const frontendUrl = process.env.FRONTEND_URL || "http://localhost:5173";
       const verifyLink = `${frontendUrl}/verify-email?token=${token}`;
 

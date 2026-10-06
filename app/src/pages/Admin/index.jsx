@@ -16,7 +16,11 @@ function AdminLayout() {
         <aside className="fixed left-0 top-0 z-40 flex h-screen w-[240px] flex-col border-r border-white/8 bg-[#111113]">
           {/* Logo */}
           <div className="flex h-[64px] items-center border-b border-white/8 px-6">
-            <img src="/LogoWeb.png" alt="DUWNG" className="h-auto w-[130px]" />
+            <img
+              src={`${import.meta.env.BASE_URL}LogoWeb.png`}
+              alt="DUWNG"
+              className="h-auto w-[130px]"
+            />
           </div>
 
           {/* Label */}

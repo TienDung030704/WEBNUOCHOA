@@ -20,11 +20,6 @@ function Products() {
   const products = useSelector((state) => state.admin.products);
 
   const [page, setPage] = useState(1);
-  const totalPages = Math.max(1, Math.ceil(products.length / PAGE_SIZE));
-  const pagedProducts = products.slice(
-    (page - 1) * PAGE_SIZE,
-    page * PAGE_SIZE,
-  );
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,7 +30,7 @@ function Products() {
       }
     };
     fetchData();
-  }, []);
+  }, [dispatch]);
 
   // hàm logic xóa delete sản phẩm
   const handleDelete = async (productId) => {
@@ -55,6 +50,31 @@ function Products() {
 
   const [searchValue, setSearchValue] = useState("");
   const debounceSearchValue = useDebounce(searchValue, 200);
+  const [genderFilter, setGenderFilter] = useState("");
+
+  // logic search tên sản phảm hoặc thương hiệu và lọc giới tính
+  const searchText = debounceSearchValue.trim().toLowerCase();
+  const filteredProducts = products.filter((product) => {
+    const productName = product.name.toLowerCase();
+    const brandName = (product.brand?.name || "").toLowerCase();
+    
+    const matchesSearch =
+      productName.includes(searchText) || brandName.includes(searchText);
+
+    const matchesGender = !genderFilter || product.gender === genderFilter;
+
+    return matchesSearch && matchesGender;
+  });
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredProducts.length / PAGE_SIZE),
+  );
+  const pagedProducts = filteredProducts.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE,
+  );
+
   return (
     <div className="catalog-page-enter">
       {/* Header */}
@@ -81,13 +101,25 @@ function Products() {
           <input
             type="text"
             placeholder="Tìm kiếm sản phẩm..."
+            value={searchValue}
+            onChange={(event) => {
+              setSearchValue(event.target.value);
+              setPage(1);
+            }}
             className="w-full bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
           />
         </div>
         <select className="rounded-xl border border-white/10 bg-[#111113] px-4 py-2.5 text-[13px] text-white/70 outline-none">
           <option value="">Tất cả thương hiệu</option>
         </select>
-        <select className="rounded-xl border border-white/10 bg-[#111113] px-4 py-2.5 text-[13px] text-white/70 outline-none">
+        <select
+          value={genderFilter}
+          onChange={(event) => {
+            setGenderFilter(event.target.value);
+            setPage(1);
+          }}
+          className="rounded-xl border border-white/10 bg-[#111113] px-4 py-2.5 text-[13px] text-white/70 outline-none"
+        >
           <option value="">Tất cả giới tính</option>
           <option value="MALE">Nam</option>
           <option value="FEMALE">Nữ</option>
@@ -129,6 +161,15 @@ function Products() {
                     colSpan={6}
                   >
                     Chưa có dữ liệu
+                  </td>
+                </tr>
+              ) : filteredProducts.length === 0 ? (
+                <tr className="border-b border-white/5">
+                  <td
+                    className="px-5 py-10 text-center text-[13px] text-white/30"
+                    colSpan={6}
+                  >
+                    Không tìm thấy sản phẩm phù hợp
                   </td>
                 </tr>
               ) : (
@@ -193,7 +234,7 @@ function Products() {
         {/* Pagination */}
         <div className="flex items-center justify-between border-t border-white/6 px-5 py-4">
           <p className="text-[13px] text-white/40">
-            Hiển thị {products.length} sản phẩm
+            Hiển thị {filteredProducts.length} sản phẩm
           </p>
           <Pagination
             page={page}
