@@ -3,6 +3,7 @@ import { formatVariantPrice } from "@/utils/formatPrice";
 import useDebounce from "@/hooks/useDebounce";
 import {
   adminDeleteProduct,
+  adminGetBrands,
   adminGetProducts,
 } from "@/service/Admin/AdminService";
 import { Pencil, Plus, Search, Trash2 } from "lucide-react";
@@ -18,13 +19,17 @@ function Products() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const products = useSelector((state) => state.admin.products);
+  const brands = useSelector((state) => state.admin.brands);
 
   const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await dispatch(adminGetProducts()).unwrap();
+        await Promise.all([
+          dispatch(adminGetProducts()).unwrap(),
+          dispatch(adminGetBrands()).unwrap(),
+        ]);
       } catch (error) {
         console.log("ERROR FE:", error);
       }
@@ -51,19 +56,23 @@ function Products() {
   const [searchValue, setSearchValue] = useState("");
   const debounceSearchValue = useDebounce(searchValue, 200);
   const [genderFilter, setGenderFilter] = useState("");
+  const [brandFilter, setBrandFilter] = useState("");
 
-  // logic search tên sản phảm hoặc thương hiệu và lọc giới tính
+  // logic search tên sản phảm hoặc thương hiệu, lọc theo thương hiệu và giới tính
   const searchText = debounceSearchValue.trim().toLowerCase();
   const filteredProducts = products.filter((product) => {
-    const productName = product.name.toLowerCase();
+    const productName = (product.name || "").toLowerCase();
     const brandName = (product.brand?.name || "").toLowerCase();
-    
+
     const matchesSearch =
       productName.includes(searchText) || brandName.includes(searchText);
 
+    const matchesBrand =
+      !brandFilter || brandName === brandFilter.trim().toLowerCase();
+
     const matchesGender = !genderFilter || product.gender === genderFilter;
 
-    return matchesSearch && matchesGender;
+    return matchesSearch && matchesBrand && matchesGender;
   });
 
   const totalPages = Math.max(
@@ -109,8 +118,20 @@ function Products() {
             className="w-full bg-transparent text-[13px] text-white outline-none placeholder:text-white/30"
           />
         </div>
-        <select className="rounded-xl border border-white/10 bg-[#111113] px-4 py-2.5 text-[13px] text-white/70 outline-none">
+        <select
+          value={brandFilter}
+          onChange={(event) => {
+            setBrandFilter(event.target.value);
+            setPage(1);
+          }}
+          className="rounded-xl border border-white/10 bg-[#111113] px-4 py-2.5 text-[13px] text-white/70 outline-none"
+        >
           <option value="">Tất cả thương hiệu</option>
+          {brands.map((brand) => (
+            <option key={brand.id} value={brand.name}>
+              {brand.name}
+            </option>
+          ))}
         </select>
         <select
           value={genderFilter}

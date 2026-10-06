@@ -116,6 +116,7 @@ Các enum gồm `Role`, `AuthProvider`, `Gender`, `Concentration`, `OrderStatus`
 - Thao tác giỏ hàng và form thanh toán có luồng gọi COD/VNPay.
 - Tạo đơn từ giỏ hàng, API lịch sử/chi tiết/hủy đơn và trang thông báo đặt hàng.
 - Quản trị CRUD sản phẩm/thương hiệu, danh sách/xóa người dùng và API danh sách/cập nhật trạng thái đơn.
+- Trang quản trị sản phẩm đã tải danh sách thương hiệu và hỗ trợ lọc theo thương hiệu được chọn đồng thời với tìm kiếm và lọc giới tính.
 - Nút Messenger/Zalo mở liên kết liên hệ đã cấu hình; nút mũi tên cuộn mượt về đầu trang trên các trang không thuộc admin.
 - Prisma schema và lịch sử migration cho người dùng, catalog, giỏ hàng, đơn hàng, thanh toán và hàng đợi.
 
@@ -124,6 +125,7 @@ Các enum gồm `Role`, `AuthProvider`, `Gender`, `Concentration`, `OrderStatus`
 Không tìm thấy công cụ theo dõi công việc, danh sách việc cần làm đáng tin cậy hoặc dấu hiệu rõ ràng cho biết developer đang thực hiện việc nào. Vì vậy, công việc đang làm thực tế là **Chưa xác định**.
 
 Các phần sau mới là triển khai dở dang trong mã nguồn, không thể khẳng định là công việc đang được thực hiện: refresh token, toàn bộ vòng đời VNPay, xử lý email qua hàng đợi, tích hợp AI, tải ảnh đại diện lên và một số điều khiển giao diện. Xem thêm mục 10–11.
+Cập nhật gần đây: trang quản trị sản phẩm đã bổ sung danh sách thương hiệu và logic lọc theo thương hiệu được chọn; tính năng này đã được triển khai ở giao diện admin và kiểm tra build thành công.
 
 ## 10. TODO / Tính năng dự kiến
 
